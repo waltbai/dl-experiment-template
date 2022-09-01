@@ -120,6 +120,10 @@ otherwise yaml reader will recognize it as a string.
 Network structure can be implemented under ``network`` module.
 It is recommended to split files according to different components.
 
+## ProgressBar
+Use ``tqdm`` in ascii mode to avoid some conflictions when using ``screen``: ``tqdm(total=total, ascii=True)``.
+Or, use ``screen -U`` to run screen in utf-8 mode.
+
 ## Preprocess
 
 ```bash 

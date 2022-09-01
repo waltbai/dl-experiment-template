@@ -20,7 +20,8 @@ class BasicPredictor(ABC):
 
     def __init__(self,
                  config: dict,
-                 device: str = "cpu"):
+                 device: str = "cpu",
+                 **kwargs):
         """Construction method of BasicPredictor class.
 
         Args:
@@ -68,6 +69,8 @@ class BasicPredictor(ABC):
     def train(self,
               train_set: BasicDataset = None,
               train_fp: str = None,
+              dev_set: BasicDataset = None,
+              dev_fp: str = None,
               verbose: bool = True) -> None:
         """Train the model on train set.
 
@@ -80,6 +83,10 @@ class BasicPredictor(ABC):
                 In many cases, train set is too large to fully load into memory.
                 Then, this argument should be a directory.
                 Only used when train_set is None.
+                Defaults to None.
+            dev_set (BasicDataset, optional): dev set.
+                Defaults to None.
+            dev_fp (str, optional): dev file path.
                 Defaults to None.
             verbose (bool): whether to print training details in logger.
                 Defaults to True.
