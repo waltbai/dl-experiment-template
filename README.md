@@ -10,134 +10,102 @@ Install this package via:
 pip install .
 ```
 
-## Implement Predictor
+## Experiment and Prediction Environments
+Experiment environment is the situation where model runs on benchmark
+datasets. In this situation, model obtains train, dev, and test datasets.
+Usually, all the datasets are labeled (or at least dev and test set are
+labeled). Furthermore, the intermediate results can be restored on the
+disk, and the data will only be processed once. The runtime directories
+are usually fixed.
 
-Methods must override:
+On the other hand, Prediction environment is the situation where model
+runs on unlabeled raw data. Usually the models are seen as well-trained
+tools to process data. The intermediate training data may not be needed,
+but the model need to process the raw data into the tensors in memory.
+In addition, the model will be possible to be imported to any directory.
+
+Here is the basic difference of the two:
+
+|                      | Experiment Env | Prediction Env |
+|----------------------|:--------------:|:--------------:|
+| labeled data         |      Yes       |       No       |
+| intermediate results |    On disk     |   In memory    |
+| Train                |      Yes       |       No       |
+| Runtime Directory    |     Fixed      |   Arbitrary    |
+| Package              |       No       |      Yes       |
+
+This template is mainly designed for experiment environment usage. However,
+we still want to provide some additional features. For example, though we
+haven't implemented the methods for prediction environment, we provide 
+some basic interface; The directory can be assigned by config file rather
+than totally fixed; The model is packaged and can be installed.
+
+## Arguments
+Argument override follows such priority:
+```command line > config file > default config ```
+
+Here, we restrict command line arguments to two: 
+``--config [config]`` and ``--device [device]``
+
+Default settings for all models are in ``config/default.yml``.
+Any other config file will override it.
+
+## Preprocessor
+In experiment environment, preprocessor usually requires to handle training 
+data, such as generating negative training samples. In addition, usually the
+data only need to be processed once. Thus, a heavy preprocessor which 
+produces many intermediate results is acceptable.
+
+However, for a model in production environment, it should be able to
+process raw data and output results immediately. Thus, a light preprocessor
+should be implemented.
+
+## Model
+Model concentrates on the neural network architecture design. It is
+recommended to inherit the basic model class ``BasicModel``. Developers
+should define the ``__init__`` and ``forward`` methods for it. The 
+implemention should be like:
+
 ```python
-from package_name.predictors import BasicPredictor
+from package_name.model import AbstractModel
 
-class MyPredictor(BasicPredictor):
-    def __init__(self, config, device="cpu"):
-        # Your own settings here
-        super(MyPredictor, self).__init__(config, device)
-    
-    def build_model(self):
-        # Construct your own model
-        pass
 
-    def train(self,
-              train_set: BasicDataset = None,
-              train_fp: str = None,
-              verbose: bool = True) -> None:
-        # Implement train process
-        pass
+class MyModel(AbstractModel):
+    """A specific model."""
 
-    def validate(self,
-                 valid_set: BasicDataset = None,
-                 valid_fp: str = None,
-                 verbose: bool = False) -> dict or float:
-        # Implement validate process
-        # It is recommended to use predict and evaluate method
-        pass
-
-    def test(self,
-             test_set: BasicDataset = None,
-             test_fp: str = None,
-             verbose: bool = True) -> dict or float:
-        # Implement test process
-        # It is recommended to use predict and evaluate method
-        pass
-
-    def predict(self,
-                pred_set: BasicDataset = None,
-                pred_fp: str = None):
-        # Implement predict process
-        pass
-
-    def evaluate(self, pred_label, true_label) -> dict or float:
-        # Implement evaluate process
-        pass
-```
-
-If you need another abstract class:
-```python
-from abc import ABC, abstractmethod
-from package_name.predictors import BasicPredictor
-
-class MyAbstractPredictor(BasicPredictor):
-    def __init__(self, config, device="cpu"):
-        # Your own settings here
-        super(MyPredictor, self).__init__(config, device)
-    
-    # Skip the abstract methods that need further implement
-    def evaluate(self, pred_label, true_label) -> dict or float:
-        # Implement evaluate process
-        pass
-```
-
-## Implement Dataset
-
-Methods must override:
-```python
-from package_name.data import BasicDataset
-
-class MyDataset(BasicDataset):
-    def __init__(self, data, train=False):
-        super(MyDataset, self).__init__(data, train)
-    
-    def get_input(self, idx: int):
-        # Implement get input
-        pass
-
-    def get_input_and_output(self, idx: int):
-        # Implement get input and output
-        pass
-```
-
-In most cases, you can use torch `DataLoader`. However, in some special cases,
-such as using graph as input, you may construct batches by yourself. Then you
-can inherit `BasicDataLoader` to design your own dataloader:
-```python
-from package_name.data import BasicDataLoader
-
-class MyDataLoader(BasicDataLoader):
     def __init__(self,
-                 dataset: BasicDataset,
-                 batch_size: int = 1,
-                 shuffle: bool = False):
-        super(MyDataLoader, self).__init__(dataset, batch_size, shuffle)
-    
-    def construct_batch(self, indices: list):
-        # Implement your batch construction strategies here.
-        pass
+                 anything_specific_to_this_model,
+                 **kwargs):
+        super(MyModel, self).__init__(**kwargs)
+        ...  # Parameters and network design
+
+    def forward(self,
+                any_input_data):
+        """Forward method for model."""
+        ...  # Inference
 ```
 
-## Config
-If you want to use scientific counting method, please use ``1.0e-5`` instead of ``1e-5``,
-otherwise yaml reader will recognize it as a string.
+``predict`` method is used for predicting on raw data. However, it can be
+ignored if developers just want to run model in experiment environment.
 
-## Network
-Network structure can be implemented under ``network`` module.
-It is recommended to split files according to different components.
+## Dataset
+The dataset is used to make batched inputs for model. It converts list/dict
+to aligned tensors. ``DatasetCollection`` is a special type of dataset, which
+load slices one-by-one, since the whole dataset is not able to load once.
+Basically it is similar with the torch Dataset class.
 
-## ProgressBar
-Use ``tqdm`` in ascii mode to avoid some conflictions when using ``screen``: ``tqdm(total=total, ascii=True)``.
-Or, use ``screen -U`` to run screen in utf-8 mode.
-
-## Preprocess
-
-```bash 
-python scripts/preprocess.py --config <ConfigFile>
-```
-
-## Train
-
-```bash 
-python scripts/train.py --config <ConfigFile> --device <Device>
-```
-
-## Test
-
-```bash 
-python scripts/test.py --config <ConfigFile> --device <Device>
-```
+## Trainer
+In experiment environment, the trainer controls the whole processing steps.
+Basically it should contain following steps:
+- Preprocess (sampling, indexing, etc.)
+  - input: ``data_dir`` for raw data
+  - output: ``preprocess_dir`` for processed data
+- Train (usually with validate)
+  - input: ``preprocess_dir`` for train and dev data
+  - output: ``model_dir`` for checkpoints
+- Continue training
+  - input: ``preprocess_dir`` for train and dev data, ``model_dir`` for checkpoints
+  - output: ``model_dir`` for checkpoints
+- Test
+  - input: ``preprocess_dir`` for test data
+  - output: ``result_dir`` for results
