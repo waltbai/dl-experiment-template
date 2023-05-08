@@ -12,7 +12,9 @@ def load_config(config_path: str = None) -> CfgNode:
         If ``config_path`` is not None, it will
         overwrite the default config.
     """
-    config = CfgNode.load_cfg("config/default.yml")
+    with open("config/default.yml", "r") as f:
+        config = CfgNode.load_cfg(f)
+    config.set_new_allowed(True)
     if config_path is not None:
         config.merge_from_file(config_path)
     return config
