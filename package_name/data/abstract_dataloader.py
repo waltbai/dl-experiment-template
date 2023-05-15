@@ -23,9 +23,9 @@ class AbstractDataLoader(ABC):
     def __iter__(self):
         if isinstance(self.dataset, DatasetList):
             for dataset in self.dataset:
-                yield self.yield_dataset(dataset)
+                yield from self.yield_dataset(dataset)
         else:
-            yield self.yield_dataset(self.dataset)
+            yield from self.yield_dataset(self.dataset)
 
     def yield_dataset(self, dataset: AbstractDataset):
         """Yield a dataset."""
