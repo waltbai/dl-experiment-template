@@ -1,29 +1,14 @@
-SYSTEM:
-  data_dir: /path/to/data
-  work_dir: /path/to/workspace
-  progress_bar: True
-  log: True
-
-# Processor input
-PROCESSOR:
-  name: default
-
-# Model hyper-parameters
-MODEL:
-  # Unique name
-  name: default
-  # Basic Type
-  backbone: default
-  # Dataset type
-  dataset: default
-
-# Training hyper-parameters
-TRAIN:
-  optimizer:
-    name: adam
-    lr: 1.0e-3
-    weight_decay: 1.0e-5
-  batch_size: 1
-  skip_process: False
-  skip_train: False
-  skip_test: False
+# Global settings
+data_path: /path/to/data
+workspace_path: /path/to/workspace
+# Preprocess settings
+preprocess:
+  components:
+    - name: component1
+      path: base.AbstractPreprocessComponent
+    - name: component2
+      path: base.AbstractPreprocessComponent
+      depends: [component1]
+    - name: component3
+      path: base.AbstractPreprocessCollector
+      depends: [component1, component2]
