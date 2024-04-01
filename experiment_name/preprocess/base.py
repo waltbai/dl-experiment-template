@@ -91,7 +91,7 @@ class Preprocess:
                 )
 
 
-class AbstractPreprocessComponent:
+class AbstractPreprocessComponent(ABC):
     """Abstract preprocess component class."""
 
     def __init__(
@@ -110,18 +110,15 @@ class AbstractPreprocessComponent:
         # Set output path
         self.output_path = output_path
 
-    # @abstractmethod
+    @abstractmethod
     def run(self,
             input_path: str | List[str],
             output_path: str,
             **kwargs):
         """Main process function."""
-        print(f"Component: {self._name}")
-        print(f"Input path: {input_path}")
-        print(f"Output path: {output_path}")
 
 
-class AbstractPreprocessCollector(AbstractPreprocessComponent):
+class AbstractPreprocessCollector(AbstractPreprocessComponent, ABC):
     """Abstract preprocess collector class."""
 
     def __init__(
@@ -136,15 +133,11 @@ class AbstractPreprocessCollector(AbstractPreprocessComponent):
         self.dev_path = dev_path
         self.test_path = test_path
 
-    # @abstractmethod
+    @abstractmethod
     def run(self,
             input_path: str | List[str],
             train_path: str = None,
             dev_path: str = None,
             test_path: str = None,
             **kwargs):
-        print(f"Component: {self._name}")
-        print(f"Input path: {input_path}")
-        print(f"Output path: {train_path}")
-        print(f"Output path: {dev_path}")
-        print(f"Output path: {test_path}")
+        """Main process function."""
