@@ -1,7 +1,11 @@
+import logging
 from datasets import Dataset
 from torch import nn
 
-from src.train.train import TrainingArguments, get_model_name
+from src.exp_1.train import TrainingArguments
+
+
+logger = logging.getLogger(__name__)
 
 
 def evaluate(

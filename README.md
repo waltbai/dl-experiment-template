@@ -62,7 +62,7 @@ root
   |-- utils				# Utility classes and functions
 |-- scripts				# Store command line scripts
 |-- config				# Store config files
-|-- unit_test			# Store unit test cases
+|-- tests   			# Store unit test cases
 |-- requirements.txt		# List python requirements
 ```
 

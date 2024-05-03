@@ -1,8 +1,12 @@
 from dataclasses import dataclass
+import logging
 
 from datasets import Dataset
 from torch import nn
 from transformers import Seq2SeqTrainingArguments
+
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
