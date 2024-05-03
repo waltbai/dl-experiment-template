@@ -54,18 +54,23 @@ scripts/test.sh
 ### Project Structure
 ```
 root
-|-- src					# Store source codes
-  |-- prepare			# Prepare stage
-  |-- train				# Train stage
-  |-- inference   # Inference stage
-  |-- workflow    # Experiment workflow control
-  |-- utils				# Utility classes and functions
-|-- scripts				# Store command line scripts
-|-- config				# Store config files
-|-- tests   			# Store unit test cases
+|-- src					      # Store source codes
+  |-- exp_1			      # Codes for each experiment settings
+    |-- workflow.py   # Overall workflow control
+    |-- prepare.py    # Prepare data
+    |-- train.py      # Train model on train and valid sets
+    |-- inference.py  # Evaluate on valid and test sets
+  |-- utils				    # Utility classes and functions
+|-- scripts				    # Store command line scripts
+  |-- unittest.sh     # Scripts to run unit tests
+  |-- train.sh        # Scripts to run train on train and valid sets
+  |-- evaluate.sh     # Scripts to run evaluation on valid set
+  |-- test.sh         # Scripts to run evaluation on test set
+|-- config				    # Store config files
+|-- tests   			    # Store unit test cases
 |-- requirements.txt		# List python requirements
 ```
 
 ### Guide
-1. Add `prepare/prepare.py`, `train/train.py`, `inference/inference.py` with specific prefixes if the experiment contains multiple model variants.
+1. Add folders in `src/` if the experiment contains multiple model variants.
 2. It's ***highly recommended*** to design unit test cases for important preparation classes and functions!
