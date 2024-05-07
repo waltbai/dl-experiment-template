@@ -3,15 +3,12 @@ import logging
 
 from datasets import Dataset
 from torch import nn
-from transformers import Seq2SeqTrainingArguments
+
+from .args import TrainingArguments
 
 
 logger = logging.getLogger(__name__)
 
-
-@dataclass
-class TrainingArguments(Seq2SeqTrainingArguments):
-	"""Customized training arguments."""
 
 
 def get_model_name(

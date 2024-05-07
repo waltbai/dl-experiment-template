@@ -1,12 +1,23 @@
-# Neural Network-based Experiment Template
-This is a template for neural network-based experiments.
+# Deep Learning Experiment Template
+This is a template for deep learning experiments,
+especially adapted to llama-factory.
 
 ## Requirements
 - python==3.10
 - torch==2.2
-- transformers==4.40
+- transformers>=4.40
 - datasets>=2.19
 - llama_factory>=0.7.0
+- accelerate==0.30.0
+- peft==0.10.0
+- trl==0.8.6
+- deepspeed==0.14.0
+- vllm==0.4.2
+- flash-attn==2.5.8
+- bitsandbytes==0.43.1
+- nltk (for computing metrics during sft)
+- jieba (for computing metrics during sft)
+- rouge-chinese (for computing metrics during sft)
 - tqdm
 
 ## Usage
@@ -54,21 +65,22 @@ scripts/test.sh
 ### Project Structure
 ```
 root
-|-- src					      # Store source codes
-  |-- exp_1			      # Codes for each experiment settings
+|-- src               # Store source codes
+  |-- exp_1           # Codes for each experiment settings
     |-- workflow.py   # Overall workflow control
     |-- prepare.py    # Prepare data
     |-- train.py      # Train model on train and valid sets
     |-- inference.py  # Evaluate on valid and test sets
-  |-- utils				    # Utility classes and functions
-|-- scripts				    # Store command line scripts
+  |-- utils           # Utility classes and functions
+|-- scripts           # Store command line scripts
   |-- unittest.sh     # Scripts to run unit tests
   |-- train.sh        # Scripts to run train on train and valid sets
   |-- evaluate.sh     # Scripts to run evaluation on valid set
   |-- test.sh         # Scripts to run evaluation on test set
-|-- config				    # Store config files
-|-- tests   			    # Store unit test cases
-|-- requirements.txt		# List python requirements
+|-- config            # Store config files
+  |-- default.yaml    #
+|-- tests             # Store unit test cases
+|-- requirements.txt  # List python requirements
 ```
 
 ### Guide

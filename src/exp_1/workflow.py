@@ -2,10 +2,8 @@
 
 from dataclasses import dataclass
 import logging
-from typing import Literal
 
-from src.exp_1.prepare import PrepareArguments
-from src.exp_1.train import TrainingArguments
+from .args import PrepareArguments, TrainingArguments
 
 
 logger = logging.getLogger(__name__)

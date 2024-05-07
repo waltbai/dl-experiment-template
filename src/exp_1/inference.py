@@ -2,7 +2,7 @@ import logging
 from datasets import Dataset
 from torch import nn
 
-from src.exp_1.train import TrainingArguments
+from .args import TrainingArguments
 
 
 logger = logging.getLogger(__name__)
