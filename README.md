@@ -67,22 +67,26 @@ scripts/test.sh
 root
 |-- src               # Store source codes
   |-- exp_1           # Codes for each experiment settings
+    |-- args.py       # Arguments in each phase
     |-- workflow.py   # Overall workflow control
-    |-- prepare.py    # Prepare data
+    |-- prepare.py    # Data preparation phase
+    |-- model.py      # Model definition
     |-- train.py      # Train model on train and valid sets
     |-- inference.py  # Evaluate on valid and test sets
   |-- utils           # Utility classes and functions
+    |-- common.py     # Common functions.
 |-- scripts           # Store command line scripts
   |-- unittest.sh     # Scripts to run unit tests
   |-- train.sh        # Scripts to run train on train and valid sets
   |-- evaluate.sh     # Scripts to run evaluation on valid set
   |-- test.sh         # Scripts to run evaluation on test set
 |-- config            # Store config files
-  |-- default.yaml    #
+  |-- default.yaml    # Default config file
 |-- tests             # Store unit test cases
 |-- requirements.txt  # List python requirements
 ```
 
 ### Guide
-1. Add folders in `src/` if the experiment contains multiple model variants.
+1. Add folders in `src/` if the experiment contains multiple model variants.  
+For example, add `src/exp_2/` and corresponding files.
 2. It's ***highly recommended*** to design unit test cases for important preparation classes and functions!
