@@ -1,0 +1,8 @@
+# Model
+model_name_or_path: model/
+
+# Data
+dataset: example
+data_dir: data/
+
+
